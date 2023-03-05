@@ -67,7 +67,7 @@ prev_error = 0
 temp_counter = 0
 
 ############################################## FAN CONFIG >
-FLASK_PORT = 8000
+FLASK_PORT = 8080
 ################################################### FLASK GLOBAL CONFIG <
 # Start Web Server Flask APP.
 app = Flask(__name__)
