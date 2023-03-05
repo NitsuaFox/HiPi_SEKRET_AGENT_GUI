@@ -6,6 +6,7 @@ import time
 import RPi.GPIO as GPIO
 import configparser
 import Adafruit_DHT
+import threading
 
 #Define Friendly Sensor Names
 DHT22_SENSOR = Adafruit_DHT.DHT22
@@ -13,6 +14,8 @@ DHT22_SENSOR = Adafruit_DHT.DHT22
 #Define Data Variables
 TEMP_INT = 50 
 HUM_INT = 0
+WATER_MAX = None
+WATER_MIN = None
 
 ################################################### GPIO PINS <
 #GPIOS ULTRASONIC
@@ -39,16 +42,9 @@ GPIO.setup(ECHO_PIN, GPIO.IN)
 GPIO.setup(FAN_PWM_PIN, GPIO.OUT)
 GPIO.setup(FAN_SPEED_PIN, GPIO.IN)
 GPIO.setup(DHT22_PIN, GPIO.IN, GPIO.PUD_DOWN)
+GPIO.setup(RELAY_WATERPUMP, GPIO.OUT)
+
 ################################################### GPIO SETUP >
-
-################################################### WATER PUMP <
-def turn_pump_on():
-    GPIO.output(RELAY_WATERPUMP, GPIO.LOW)
-
-def turn_pump_off():
-    GPIO.output(RELAY_WATERPUMP, GPIO.HIGH)
-
-################################################### WATER PUMP >
 
 ############################################## FAN CONFIG <
 # Set PWM frequency
@@ -153,23 +149,24 @@ def read_water_level():
 ################################################### ULTRASONIC SENSOR >
 
 
-################################################### WATERING SYSTEM LOOP >
+################################################### WATERING SYSTEM functions <
 
-# Pump fail-safe function FOR MAIN WATERING LOOP
-def pump_fail_safe():
-    distance = get_distance()
+def pump_fail_safe(distance, WATER_MAX, WATER_MIN):
+    # Check if the water level is too low
     if distance > WATER_MAX:
-        turn_pump_off()
-        return "Pump stopped - water level too high"
-    elif distance < WATER_MIN:
-        turn_pump_off()
-        return "Pump stopped - water level too low"
+        GPIO.output(RELAY_WATERPUMP, GPIO.HIGH)
+        print("Water level is too low, turning off pump.")
+    # Check if the water level is normal
+    elif distance > WATER_MIN:
+        GPIO.output(RELAY_WATERPUMP, GPIO.LOW)
+        print("Water level is too low, turning  on pump.")
     else:
-        turn_pump_on()
-        return "Pump started - watering in progress"
+        GPIO.output(RELAY_WATERPUMP, GPIO.HIGH)
+        print("Water level is too high, turning off pump.")
 
 
-################################################### WATERING SYSTEM LOOP >
+
+################################################### WATERING SYSTEM functions >
 
 ################################################### FLASK STUFF <
 @app.route('/')
@@ -221,14 +218,37 @@ def update_config():
 
     return 'Config updated successfully'
 
-if __name__ == '__main__':
-    # Start the Flask app
-    app.run(debug=True, host='0.0.0.0', port=str(FLASK_PORT))
-
-    # Start the main loop
+# Define a function to run the main loop
+def main_loop():
     while True:
         print("Main loop running.")
         Get_DHT22_Data()  # Update the temperature and humidity variables
         distance = get_distance()
-        pump_fail_safe(distance)
-        time.sleep(1)
+        #if WATER_MAX is not None and WATER_MIN is not None:
+        #    pump_fail_safe(distance, WATER_MAX, WATER_MIN)
+        #time.sleep(0.1)
+
+if __name__ == '__main__':
+    # Start the main loop in a new thread
+    main_thread = threading.Thread(target=main_loop)
+    main_thread.daemon = True
+    main_thread.start()
+
+    ultrasonic_thread = threading.Thread(target=get_distance)
+    ultrasonic_thread.daemon = True
+    ultrasonic_thread.start()
+
+    pump_thread = threading.Thread(target=pump_fail_safe)
+    pump_thread.daemon = True
+    pump_thread.start()
+
+    # Run the Flask app
+    app.run(debug=True, host='0.0.0.0', port=str(FLASK_PORT))
+    print('Flask app is running.')
+
+    # Wait for threads to finish
+    ultrasonic_thread.join()
+    pump_fail_safe.join()
+    
+    # Cleanup GPIO
+    GPIO.cleanup()
