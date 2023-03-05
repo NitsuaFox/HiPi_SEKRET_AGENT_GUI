@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>HiPi Control Panel</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
+  </head>
+  <body>
+    <div class="container">
+      <h1>HiPi Control Panel</h1>
+      <div class="data">
+        <h2>Water Level:</h2>
+        <h2 class="data-value" id="water-level">Loading...</h2>
+      </div>
+      <div class="data">
+        <h2>Distance:</h2>
+        <h2 class="data-value" id="distance">Loading...</h2>
+      </div>
+      <form id="config-form">
+        <div class="form-group">
+          <label for="max-level">Water Level Maximum:</label>
+          <input type="number" name="max-level" id="max-level" value="{{ config['water_level']['max'] }}" min="0" max="100" required>
+        </div>
+        <div class="form-group">
+          <label for="min-level">Water Level Minimum:</label>
+          <input type="number" name="min-level" id="min-level" value="{{ config['water_level']['min'] }}" min="0" max="100" required>
+        </div>
+        <button type="submit">Update Config</button>
+      </form>
+    </div>
+    <script>
+      function updateData() {
+        fetch('/data')
+          .then(response => response.json())
+          .then(data => {
+            document.getElementById('water-level').textContent = data.water_level;
+            document.getElementById('distance').textContent = `${data.distance} cm`;
+          });
+      }
+      setInterval(updateData, 1000);  // update data every 1 second
+
+      document.getElementById('config-form').addEventListener('submit', (event) => {
+        event.preventDefault();
+        const formData = new FormData(event.target);
+        fetch('/update-config', {
+          method: 'POST',
+          body: formData
+        })
+          .then(response => response.text())
+          .then(data => {
+            alert(data);
+          });
+      });
+    </script>
+  </body>
+</html>
