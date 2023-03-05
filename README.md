@@ -1,9 +1,13 @@
+< Current Project Title >
+
 HiPi MicroGrow with SEKRET AGENT Web GUI
 Pre-Release v0.01 - Framework Only Release.
 
-About This Project
+< About This Project > 
 
-I am creating a fully automated "HERB/PLANT" GrowBox, similar to what your would find in some hobbiest 'Grow Tent's. Expected V1 Release features.
+I am creating a fully automated "HERB/PLANT" GrowBox, similar to what you would find in some hobbiest 'Grow Tent's. 
+
+< Expected V1 Release features >
 
 ++ Software ++
 + Climate Control (Cooling ONLY)
