@@ -1,3 +1,5 @@
+Pre-Release - UNDER DEVELOPMENT
+
 HiPi - Backend
 SEKRET AGENT - HTTP FrontEnd GUI that also runs on Pi and interfaces with HiPi
 
