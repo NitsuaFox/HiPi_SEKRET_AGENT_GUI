@@ -142,8 +142,8 @@ def home():
     return render_template('home.html', config=config)
 
 
-@app.route('/settings')
-def settings():
+@app.route('/water_config')
+def water_config():
     return render_template('water-config.html', config=config)
 
 #This is where we send the variables and sensor data for the JAVASCRIPT
