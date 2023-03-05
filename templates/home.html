@@ -9,17 +9,25 @@
     {% include 'navbar.html' %}
     <h1>Live Dashboard</h1>
     <div class="container">
-      <!-- Section for displaying water sensor data -->
-      <h1>Water Data</h1>
+      <h1>Watering System</h1>
       <div class="data">
-        <h2>Water Status</h2>
-        <!-- Placeholder for displaying water level status -->
+        <h2>Water Tank Status</h2>
         <h2 class="data-value" id="water-level">Loading...</h2>
       </div>
       <div class="data">
-        <h2>Detected Distance</h2>
-        <!-- Placeholder for displaying distance data -->
+        <h2>Ultrasonic Distance Data</h2>
+        <!-- Placeholder  -->
         <h2 class="data-value" id="distance">Loading...</h2>
+      </div>
+      <div class="data">
+        <h2>Pump Status</h2>
+        <!-- Placeholder  -->
+        <h2 class="data-value" id="">Loading...</h2>
+      </div>
+      <div class="data">
+        <h2>Soil Sensor Data</h2>
+        <!-- Placeholder f -->
+        <h2 class="data-value" id="">Loading...</h2>
       </div>
     </div>
 
@@ -62,11 +70,12 @@
       <div class="data">
       <BR>
         <BR>
-
         <!-- Placeholder for Camera Stream -->
-  
       </div>
     </div>
+
+
+<!-- JAVASCRIPT STARTS -->
 <script>
   // Define a function to update the data shown on the page
   function updateData() {
@@ -112,6 +121,8 @@
       });
   });
 </script>
+<!-- JAVASCRIPT STARTS -->
+
 {% include 'footer.html' %}
   </body>
 </html>

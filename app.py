@@ -153,7 +153,7 @@ def get_data():
     distance = get_distance()
     return jsonify({
         'water_level': read_water_level(),
-        'distance': distance,
+        'distance': round(distance, 2),
         'max_level': WATER_MAX,
         'min_level': WATER_MIN,
         'temp_int': TEMP_INT,
