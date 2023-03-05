@@ -7,10 +7,10 @@ GPIO.setmode(GPIO.BCM)
 GPIO.setup(RELAY_PIN1, GPIO.OUT)
 
 def turn_pump_on():
-    GPIO.output(RELAY_PIN1, GPIO.HIGH)
+    GPIO.output(RELAY_PIN1, GPIO.LOW)
 
 def turn_pump_off():
-    GPIO.output(RELAY_PIN1, GPIO.LOW)
+    GPIO.output(RELAY_PIN1, GPIO.HIGH)
 
 try:
     while True:
