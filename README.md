@@ -30,8 +30,8 @@ I am creating a fully automated "HERB/PLANT" GrowBox, similar to what you would 
         - Lights
 
 ++ Hardware ++
- +v1.0 STL Files for 3D Printing.
- Complete BOM / List of Parts Used.
+    - +v1.0 STL Files for 3D Printing.
+    - Complete BOM / List of Parts Used. Google Sheets URL [ https://docs.google.com/spreadsheets/d/1K0nIIm9HZUxUeM3qkQexdpk9o9CC-RDYGRxd3GqyZ_c/edit?usp=sharing ]
 
 ++ Documentation ++ 
 This may be sparse with the inital release but intention will be to update if needed or if the project calls for it (demand from users)
