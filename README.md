@@ -1,13 +1,33 @@
-Pre-Release - UNDER DEVELOPMENT
+HiPi MicroGrow with SEKRET AGENT Web GUI
+Pre-Release v0.01 - Framework Only Release.
 
-HiPi - Backend
-SEKRET AGENT - HTTP FrontEnd GUI that also runs on Pi and interfaces with HiPi
+About This Project
 
-HiPi is a 3D Printed Micro "HERB" grow box that will utilise the following feature on Version 1 Release. 
+I am creating a fully automated "HERB/PLANT" GrowBox, similar to what your would find in some hobbiest 'Grow Tent's. Expected V1 Release features.
 
-1. Soil Monitoring (Soil Sensor)
-2. Self Watering System with Water Tank Level sensor. (UltraSonic Sensor)
-3. 50W LED Full Spectrum Grow Light
-4. Tempreture and humidity monitoring with climate control PID/PWM FAN Control to cool.
-5. Carbon Filter designed to remove unwanted smells from any strong "HERBS"
-6. Web Based Front-End that initally allows basic controls.
+++ Software ++
++ Climate Control (Cooling ONLY)
+    - DHT22 Temp/Humidity with 120mm PWM Fan
+    - PID Controlled FAN for maintaining Temp
+    - Alerts for when FAN can't bring down/maintain Temp.
+    - Humidity Alerts.
++ LED Full Spectrum Grow Light (50W) ON/OFF Control/
++ Config.ini for persistant backend value changes available for user config via webapp.
++ Complete Watering system for a single micro plant.
+    - Soil Sensor + 5V Water Pump + Water Tank Level Monitor.
+
++ WebApp Frontend - SEKRET AGENT GUI.
+    - Flask Http Web Interface JSON/Javascript to backend (HiPi)
+    - Live Dashboard  
+        - Inital Sensor Data
+    - Config Pages for each sensor/system
+        - Water / Soil
+        - Cooling
+        - Lights
+
+++ Hardware ++
+ +v1.0 STL Files for 3D Printing.
+ Complete BOM / List of Parts Used.
+
+++ Documentation ++ 
+This may be sparse with the inital release but intention will be to update if needed or if the project calls for it (demand from users)
