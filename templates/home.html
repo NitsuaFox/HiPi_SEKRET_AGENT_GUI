@@ -94,14 +94,13 @@
         // Update the water level element with the new value
         document.getElementById('temp_int').textContent = data.temp_int;
         
-        |"?"?
-        // Update th+++++e water level element with the new value
+        // Update the water level element with the new value
         document.getElementById('hum_int').textContent = data.hum_int;
       });
   }
 
-  // Call the updateData function every 1 second
-  setInterval(updateData, 2000);
+  // Call the updateData function every 5 second
+  setInterval(updateData, 5000);
 
   // Add a submit event listener to the form with id 'config-form'
   document.getElementById('config-form').addEventListener('submit', (event) => {

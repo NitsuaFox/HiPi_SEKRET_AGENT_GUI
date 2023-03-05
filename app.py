@@ -130,9 +130,12 @@ def read_water_level():
     if distance < WATER_MIN:
         return "WATER MAX"
     elif distance > WATER_MAX:
-        return "ADD WATER"
+        return "WATER MIN - PUMP LOCKED"
     else:
-        return "!CRITICAL! WATER NEEDED"
+        percent = ((distance - WATER_MIN) / (WATER_MAX - WATER_MIN)) * 100
+        percent = round(percent)
+        return f"{percent}%"
+
 
 ################################################### ULTRASONIC SENSOR >
 
