@@ -26,6 +26,10 @@ FAN_SPEED_PIN = 16
 #GPIOS DHT22
 DHT22_PIN = 17
 
+#GPIOS 5V RELAY (4 CHANNEL)
+RELAY_WATERPUMP = 26
+
+
 ################################################### GPIO PINS >
 
 ################################################### GPIO SETUP <
@@ -36,6 +40,15 @@ GPIO.setup(FAN_PWM_PIN, GPIO.OUT)
 GPIO.setup(FAN_SPEED_PIN, GPIO.IN)
 GPIO.setup(DHT22_PIN, GPIO.IN, GPIO.PUD_DOWN)
 ################################################### GPIO SETUP >
+
+################################################### WATER PUMP <
+def turn_pump_on():
+    GPIO.output(RELAY_WATERPUMP, GPIO.LOW)
+
+def turn_pump_off():
+    GPIO.output(RELAY_WATERPUMP, GPIO.HIGH)
+
+################################################### WATER PUMP >
 
 ############################################## FAN CONFIG <
 # Set PWM frequency
@@ -139,6 +152,25 @@ def read_water_level():
 
 ################################################### ULTRASONIC SENSOR >
 
+
+################################################### WATERING SYSTEM LOOP >
+
+# Pump fail-safe function FOR MAIN WATERING LOOP
+def pump_fail_safe():
+    distance = get_distance()
+    if distance > WATER_MAX:
+        turn_pump_off()
+        return "Pump stopped - water level too high"
+    elif distance < WATER_MIN:
+        turn_pump_off()
+        return "Pump stopped - water level too low"
+    else:
+        turn_pump_on()
+        return "Pump started - watering in progress"
+
+
+################################################### WATERING SYSTEM LOOP >
+
 ################################################### FLASK STUFF <
 @app.route('/')
 def home():
@@ -190,6 +222,13 @@ def update_config():
     return 'Config updated successfully'
 
 if __name__ == '__main__':
+    # Start the Flask app
     app.run(debug=True, host='0.0.0.0', port=str(FLASK_PORT))
 
-################################################### FLASK STUFF >
+    # Start the main loop
+    while True:
+        print("Main loop running.")
+        Get_DHT22_Data()  # Update the temperature and humidity variables
+        distance = get_distance()
+        pump_fail_safe(distance)
+        time.sleep(1)
