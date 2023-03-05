@@ -1,7 +1,7 @@
 HiPi - Backend
 SEKRET AGENT - HTTP FrontEnd GUI that also runs on Pi and interfaces with HiPi
 
-HiPi is a 3D Printed Micro "HERB" grow box that utilises the following features.
+HiPi is a 3D Printed Micro "HERB" grow box that will utilise the following feature on Version 1 Release. 
 
 1. Soil Monitoring (Soil Sensor)
 2. Self Watering System with Water Tank Level sensor. (UltraSonic Sensor)
