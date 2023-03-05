@@ -128,11 +128,11 @@ def get_distance():
 def read_water_level():
     distance = get_distance()
     if distance < WATER_MIN:
-        return "Water Is GOOD"
+        return "WATER MAX"
     elif distance > WATER_MAX:
-        return "Water Needs Adding NOW"
+        return "ADD WATER"
     else:
-        return "Water Is Running Out"
+        return "!CRITICAL! WATER NEEDED"
 
 ################################################### ULTRASONIC SENSOR >
 
