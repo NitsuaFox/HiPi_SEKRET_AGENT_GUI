@@ -100,7 +100,7 @@ def Get_DHT22_Data():
         TEMP_INT = round(temperature, 1)
         HUM_INT = round(humidity, 1)
 
-################################################### DHT22 SENSOR FUNC >
+################################################## DHT22 SENSOR FUNC >
 
 ################################################### ULTRASONIC SENSOR FUNC <
 def get_distance():
