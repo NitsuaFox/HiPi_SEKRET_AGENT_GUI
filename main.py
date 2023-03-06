@@ -139,6 +139,7 @@ class FanController:
         while True:
             try:
                 # Prompt user for new target temperature
+                print("The Current TARGET Temp is set at:",TARGET_TEMP,)3
                 new_target_temp = input(USERNAMEID + " please enter the target temperature for your growbox (in Celsius): ")
                 TARGET_TEMP = float(new_target_temp)
                 print(f"Target temperature set to {TARGET_TEMP} C")
@@ -198,6 +199,11 @@ class Menu:
         print("1. [DEBUG] Set Speed 1-100")
         print("b. Back")
 
+    def print_general_menu(self):
+        print("1. Update Username")
+        print("2. Update Device Name")
+        print("b. Back")
+
     def run(self):
         while not self.stop:
             self.print_main_menu()
@@ -243,8 +249,17 @@ class Menu:
                                 break
                             else:
                                 print("Invalid choice")
+            elif choice == "4":
+                while True:
+                    self.print_general_menu()
+                    general_choice = input("Enter choice: ")
+                    if general_choice == "1":
+                        # Update username
                         break
-                    elif climate_setup_choice.lower() == "b":
+                    elif general_choice == "2":
+                        # Update device name
+                        break
+                    elif general_choice.lower() == "b":
                         break
                     else:
                         print("Invalid choice")
