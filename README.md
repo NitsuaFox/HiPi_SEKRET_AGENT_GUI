@@ -23,9 +23,9 @@ V1.0 - Main.py (Backend) codename: herbie
 
 V1.0 - WebApp Frontend - codename: SEKRET AGENT
 ---------------------------
-  +Flask Http Web Interface JSON/Javascript to backend (HiPi) or probably websockets now.
-  +Live Dashboard  
-     -Inital Sensor Data
+  + Flask Http Web Interface JSON/Javascript to backend (HiPi) or probably websockets now.
+  + Live Dashboard  
+     - Inital Sensor Data
  
   +Config Pages for each sensor/system
       - Water / Soil
