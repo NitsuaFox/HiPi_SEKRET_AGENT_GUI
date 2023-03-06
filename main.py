@@ -22,6 +22,7 @@ FAN_PWM_PIN = 12
 FAN_SPEED_PIN = 16
 DHT22_PIN = 17
 RELAY_WATERPUMP = 26
+SOIL_PIN = 23 #SOIL SENSOR
 
 # GPIO SETUP MODE
 GPIO.setwarnings(False)
@@ -281,6 +282,8 @@ class Menu:
                                 break
                             else:
                                 print("Invalid choice")
+                    elif climate_setup_choice.lower() == "b":
+                        break
             elif choice == "4":
                 while True:
                     self.print_watering_system_menu()
@@ -294,10 +297,11 @@ class Menu:
                     elif watering_system_choice == "3":
                         watering_system.test_pump()
                         break
-                    elif watering_system_choice.lower() == "back":
+                    elif watering_system_choice.lower() == "b":
                         break
                     else:
-                        print("Invalid choice")                      
+                        print("Invalid choice") 
+                              
             elif choice == "5":
                 while True:
                     self.print_general_menu()
@@ -312,11 +316,6 @@ class Menu:
                         break
                     else:
                         print("Invalid choice")
-            elif choice.lower() == "stop":
-                self.stop = True
-                break
-            else:
-                print("Invalid choice")
 
 if __name__ == '__main__':
     # Start the sensor thread
