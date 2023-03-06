@@ -4,13 +4,16 @@
 from getch import getch
 import time
 import RPi.GPIO as GPIO
-import configparser
 import Adafruit_DHT
 import threading
 import time
 import logging
 
+
+USERNAMEID = "Bobby" 
+GROWBOXID = "MyHiPi"
 FAN_SPEED = 0
+TARGET_TEMP = 20
 
 # GPIO PINS
 TRIGGER_PIN = 6 # Trigger for Ultrasonic Sensor
@@ -32,7 +35,7 @@ GPIO.setup(FAN_SPEED_PIN, GPIO.IN)
 GPIO.setup(DHT22_PIN, GPIO.IN, GPIO.PUD_DOWN)
 #GPIO.setup(RELAY_WATERPUMP, GPIO.OUT)
 
-# Set up logging
+# LOGGING SETUP
 logging.basicConfig(
     level=logging.DEBUG,
     format="%(asctime)s [%(levelname)s] %(message)s",
@@ -41,6 +44,7 @@ logging.basicConfig(
     ]
 )
 
+# CLASSES
 class SensorReturns:
     def __init__(self):
         self.distance_cm = 0
@@ -67,10 +71,10 @@ class SensorReturns:
         self.distance_cm = round(pulse_duration * 17150, 2)
 
         # Sleep for a short time to avoid spamming the sensor
-        time.sleep(0.05)
+        time.sleep(0.02)
 
     def get_dht22_data(self):
-        logging.info(f"Talking to DHT22....")
+        #logging.info(f"Talking to DHT22....")
         humidity, temperature = Adafruit_DHT.read_retry(Adafruit_DHT.DHT22, DHT22_PIN)
         if humidity is not None and temperature is not None:
             self.humidity = round(humidity, 1)
@@ -78,10 +82,10 @@ class SensorReturns:
 
     def get_sensor_data(self):
         while True:
-            logging.info(f"get_sensor_data -running {time.time()}...")
+            #logging.info(f"get_sensor_data -running {time.time()}...")
             self.get_distance()
             self.get_dht22_data()
-            time.sleep(0.5)
+            time.sleep(0.2)
 
 sensor_returns = SensorReturns()
 
@@ -127,13 +131,29 @@ class FanController:
 
     def run_fan_speed_test(self):
         # Run fan speed test
+        print("We dont have a fan test yet bobby!")
         pass
+
+    def set_climate_target_temperature(self):
+        global TARGET_TEMP
+        while True:
+            try:
+                # Prompt user for new target temperature
+                new_target_temp = input(USERNAMEID + " please enter the target temperature for your growbox (in Celsius): ")
+                TARGET_TEMP = float(new_target_temp)
+                print(f"Target temperature set to {TARGET_TEMP} C")
+            except ValueError as e:
+                print(f"Invalid temperature: {e}")
+            except KeyboardInterrupt:
+                print("\nClimate control setup cancelled by user")
+                break
+
 
     def set_fan_speed(self):
         global FAN_SPEED
         while True:
             # Prompt user for new fan speed
-            new_fan_speed_str = input("Enter new fan speed (0-100, or x to cancel): ")
+            new_fan_speed_str = input(USERNAMEID + " please enter new fan speed (0-100, or x to cancel): ")
             if new_fan_speed_str.lower() == "x":
                 break
             try:
@@ -160,19 +180,22 @@ class Menu:
         print("1. Print Current Sensor Data")
         print("2. Sensor Setup")
         print("3. Climate Control Setup")
-        print("4. Fan Control")
+        print("4. General")
+
 
     def print_sensor_returns_menu(self):
-        print("1. Turn Sensor Returns On")
-        print("2. Turn Sensor Returns Off")
+        print("1. [DEBUG] Turn Sensor Returns On")
+        print("2. [DEBUG] Turn Sensor Returns Off")
+        print("b. Back")
 
     def print_climate_setup_menu(self):
         print("1. Set Climate Target Temperature")
-        print("2. Run Fan Speed Test")
+        print("2. [DEBUG] Run Fan Speed Test")
+        print("3. [DEBUG] Fan Control")
         print("b. Back")
 
     def print_fan_control_menu(self):
-        print("1. Set Fan Speed")
+        print("1. [DEBUG] Set Speed 1-100")
         print("b. Back")
 
     def run(self):
@@ -209,18 +232,19 @@ class Menu:
                     elif climate_setup_choice == "2":
                         # Run fan speed test
                         break
+                    elif climate_setup_choice == "3":
+                        while True:
+                            self.print_fan_control_menu()
+                            fan_control_choice = input("Enter choice: ")
+                            if fan_control_choice == "1":
+                                fan_controller.set_fan_speed()
+                                break
+                            elif fan_control_choice.lower() == "b":
+                                break
+                            else:
+                                print("Invalid choice")
+                        break
                     elif climate_setup_choice.lower() == "b":
-                        break
-                    else:
-                        print("Invalid choice")
-            elif choice == "4":
-                while True:
-                    self.print_fan_control_menu()
-                    fan_control_choice = input("Enter choice: ")
-                    if fan_control_choice == "1":
-                        fan_controller.set_fan_speed()
-                        break
-                    elif fan_control_choice.lower() == "b":
                         break
                     else:
                         print("Invalid choice")
@@ -229,7 +253,6 @@ class Menu:
                 break
             else:
                 print("Invalid choice")
-
 
 if __name__ == '__main__':
     # Start the sensor thread
