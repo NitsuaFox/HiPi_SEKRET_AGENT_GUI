@@ -1,4 +1,4 @@
-HiPi (Working Name) An all-in-one stelth micro growing system for plants and herbs.
+<h1>HiPi (Working Name) An all-in-one stelth micro growing system for plants and herbs.</h1>
 
 I am a single man team working on all of this, and i'm using it to learn more above development. 
 
