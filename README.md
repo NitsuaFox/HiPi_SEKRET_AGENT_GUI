@@ -1,11 +1,6 @@
-=Current Project Title=
+HiPi (Working Name) An all-in-one stelth micro growing system for plants and herbs.
 
-HiPi MicroGrow with SEKRET AGENT Web GUI
-Pre-Release v0.01 - Framework Only Release.
-
-=About This Project=
-
-I am creating a fully automated "HERB/PLANT" GrowBox, similar to what you would find in some hobbiest 'Grow Tent's. 
+I am a single man team working on all of this, and i'm using it to learn more above development. 
 
 =Expected V1 Release features=
 
