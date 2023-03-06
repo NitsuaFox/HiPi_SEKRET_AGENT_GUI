@@ -7960,3 +7960,57 @@
 2023-03-06 18:16:12,732 [INFO] SensorThread is running
 2023-03-06 18:18:10,082 [INFO] SensorThread is running
 2023-03-06 18:22:07,113 [INFO] SensorThread is running
+2023-03-06 18:26:43,321 [INFO] SensorThread is running
+2023-03-06 18:27:09,448 [INFO] SensorThread is running
+2023-03-06 18:29:21,184 [INFO] SensorThread is running
+2023-03-06 18:30:36,308 [INFO] SensorThread is running
+2023-03-06 18:31:50,822 [INFO] SensorThread is running
+2023-03-06 21:07:21,307 [INFO] SensorThread is running
+2023-03-06 21:08:15,434 [INFO] SensorThread is running
+2023-03-06 21:11:20,025 [INFO] SensorThread is running
+2023-03-06 21:11:24,278 [INFO] Pump turned on
+2023-03-06 21:11:25,370 [INFO] Pump turned off
+2023-03-06 21:13:50,306 [INFO] Pump turned off
+2023-03-06 21:17:07,317 [INFO] SensorThread is running
+2023-03-06 21:17:24,850 [INFO] SensorThread is running
+2023-03-06 21:17:32,956 [INFO] Pump on
+2023-03-06 21:17:32,957 [INFO] Pump turned on
+2023-03-06 21:17:32,958 [INFO] Pump WAIT
+2023-03-06 21:17:33,159 [INFO] Pump  off
+2023-03-06 21:17:33,159 [INFO] Pump turned off
+2023-03-06 21:18:23,285 [INFO] SensorThread is running
+2023-03-06 21:18:27,260 [INFO] Pump on
+2023-03-06 21:18:27,261 [INFO] Pump turned on
+2023-03-06 21:18:27,262 [INFO] Pump WAIT
+2023-03-06 21:18:27,663 [INFO] Pump  off
+2023-03-06 21:18:27,664 [INFO] Pump turned off
+2023-03-06 21:18:27,664 [INFO] Pump on
+2023-03-06 21:18:27,664 [INFO] Pump turned on
+2023-03-06 21:18:27,665 [INFO] Pump WAIT
+2023-03-06 21:18:28,066 [INFO] Pump  off
+2023-03-06 21:18:28,066 [INFO] Pump turned off
+2023-03-06 21:18:54,071 [INFO] SensorThread is running
+2023-03-06 21:19:27,517 [INFO] Pump on
+2023-03-06 21:19:27,519 [INFO] Pump turned on
+2023-03-06 21:19:27,520 [INFO] Pump WAIT
+2023-03-06 21:19:28,267 [INFO] Pump  off
+2023-03-06 21:19:28,267 [INFO] Pump turned off
+2023-03-06 21:19:28,268 [INFO] Pump on
+2023-03-06 21:19:28,268 [INFO] Pump turned on
+2023-03-06 21:19:28,268 [INFO] Pump WAIT
+2023-03-06 21:19:29,022 [INFO] Pump  off
+2023-03-06 21:19:29,023 [INFO] Pump turned off
+2023-03-06 21:21:13,966 [INFO] SensorThread is running
+2023-03-06 21:21:17,811 [INFO] Pump turned on
+2023-03-06 21:21:17,812 [INFO] Pump on
+2023-03-06 21:21:18,814 [INFO] Pump turned off
+2023-03-06 21:21:20,339 [INFO] Pump turned on
+2023-03-06 21:21:20,340 [INFO] Pump on
+2023-03-06 21:21:20,441 [INFO] Pump turned off
+2023-03-06 21:22:15,465 [INFO] SensorThread is running
+2023-03-06 21:22:21,247 [INFO] Pump turned on
+2023-03-06 21:22:21,248 [INFO] Pump on
+2023-03-06 21:22:23,250 [INFO] Pump turned off
+2023-03-06 21:22:25,254 [INFO] Pump turned on
+2023-03-06 21:22:25,254 [INFO] Pump on
+2023-03-06 21:22:27,627 [INFO] Pump turned off

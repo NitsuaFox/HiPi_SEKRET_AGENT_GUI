@@ -33,7 +33,7 @@ GPIO.setup(ECHO_PIN, GPIO.IN)
 GPIO.setup(FAN_PWM_PIN, GPIO.OUT)
 GPIO.setup(FAN_SPEED_PIN, GPIO.IN)
 GPIO.setup(DHT22_PIN, GPIO.IN, GPIO.PUD_DOWN)
-#GPIO.setup(RELAY_WATERPUMP, GPIO.OUT)
+GPIO.setup(RELAY_WATERPUMP, GPIO.OUT)
 
 # LOGGING SETUP
 logging.basicConfig(
@@ -100,6 +100,31 @@ class SensorThread(threading.Thread):
 
 sensor_thread = SensorThread()
 
+class WateringSystem:
+    def __init__(self, RELAY_WATERPUMP):
+        self.RELAY_WATERPUMP = RELAY_WATERPUMP
+        GPIO.setup(RELAY_WATERPUMP, GPIO.OUT)
+
+    def pump_on(self):
+        GPIO.output(self.RELAY_WATERPUMP, GPIO.LOW)
+        logging.info("Pump turned on")
+
+    def pump_off(self):
+        GPIO.output(self.RELAY_WATERPUMP, GPIO.HIGH)
+        logging.info("Pump turned off")
+
+    def test_pump(self):
+             
+        self.pump_on()
+        logging.info("Pump on") 
+        time.sleep(2)
+        self.pump_off()
+        time.sleep(2)
+        self.pump_on()
+        logging.info("Pump on") 
+        time.sleep(2)
+        self.pump_off()
+
 class FanController:
     def __init__(self, fan_pwm_pin, sensor_returns):
         self.fan_pwm_pin = fan_pwm_pin
@@ -139,7 +164,7 @@ class FanController:
         while True:
             try:
                 # Prompt user for new target temperature
-                print("The Current TARGET Temp is set at:",TARGET_TEMP,)3
+                print("The Current TARGET Temp is set at:",TARGET_TEMP,)
                 new_target_temp = input(USERNAMEID + " please enter the target temperature for your growbox (in Celsius): ")
                 TARGET_TEMP = float(new_target_temp)
                 print(f"Target temperature set to {TARGET_TEMP} C")
@@ -181,7 +206,8 @@ class Menu:
         print("1. Print Current Sensor Data")
         print("2. Sensor Setup")
         print("3. Climate Control Setup")
-        print("4. General")
+        print("4. Watering System Setup")
+        print("5. General")
 
 
     def print_sensor_returns_menu(self):
@@ -197,6 +223,12 @@ class Menu:
 
     def print_fan_control_menu(self):
         print("1. [DEBUG] Set Speed 1-100")
+        print("b. Back")
+        
+    def print_watering_system_menu(self):
+        print("1. Turn On Pump")
+        print("2. Turn Off Pump")
+        print("3. Run Pump Test")
         print("b. Back")
 
     def print_general_menu(self):
@@ -251,6 +283,23 @@ class Menu:
                                 print("Invalid choice")
             elif choice == "4":
                 while True:
+                    self.print_watering_system_menu()
+                    watering_system_choice = input("Enter choice: ")
+                    if watering_system_choice == "1":
+                        watering_system.pump_on()
+                        break
+                    elif watering_system_choice == "2":
+                        watering_system.pump_off()
+                        break
+                    elif watering_system_choice == "3":
+                        watering_system.test_pump()
+                        break
+                    elif watering_system_choice.lower() == "back":
+                        break
+                    else:
+                        print("Invalid choice")                      
+            elif choice == "5":
+                while True:
                     self.print_general_menu()
                     general_choice = input("Enter choice: ")
                     if general_choice == "1":
@@ -273,8 +322,11 @@ if __name__ == '__main__':
     # Start the sensor thread
     sensor_thread.start()
 
-    # Create fan_controller
+    # Create fan_controller instance
     fan_controller = FanController(FAN_PWM_PIN, sensor_returns)
+
+    # Create Watering System Instance
+    watering_system = WateringSystem(RELAY_WATERPUMP)
 
     # Create Menu instance
     menu = Menu()
