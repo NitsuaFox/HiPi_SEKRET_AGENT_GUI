@@ -16,7 +16,7 @@ V1.0 - Main.py (Backend) codename: herbie
 + Complete Watering system for a single micro plant.
     - Soil Sensor + 5V Water Pump + Water Tank Level Monitor.
 
-V1.0 - WebApp Frontend - codename: SEKRET AGENT
+V1.0 - WebApp (Frontend) - codename: SEKRET AGENT
 ---------------------------
   + Flask Http Web Interface JSON/Javascript to backend (HiPi) or probably websockets now.
   + Live Dashboard  
