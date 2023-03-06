@@ -9,8 +9,7 @@ I am creating a fully automated "HERB/PLANT" GrowBox, similar to what you would 
 
 =Expected V1 Release features=
 
-V1.0
-Main.py (Backend) codename: herbie
+V1.0 - Main.py (Backend) codename: herbie
 -------------------------
 + Climate Control (Cooling ONLY)
     - DHT22 Temp/Humidity with 120mm PWM Fan
@@ -22,22 +21,23 @@ Main.py (Backend) codename: herbie
 + Complete Watering system for a single micro plant.
     - Soil Sensor + 5V Water Pump + Water Tank Level Monitor.
 
-V1.0 WebApp Frontend - codename: SEKRET AGENT
+V1.0 - WebApp Frontend - codename: SEKRET AGENT
 ---------------------------
-    - Flask Http Web Interface JSON/Javascript to backend (HiPi) or probably websockets now.
-    - Live Dashboard  
-        - Inital Sensor Data
-    - Config Pages for each sensor/system
-        - Water / Soil
-        - Cooling
-        - Lights
+  +Flask Http Web Interface JSON/Javascript to backend (HiPi) or probably websockets now.
+  +Live Dashboard  
+     -Inital Sensor Data
+ 
+  +Config Pages for each sensor/system
+      - Water / Soil
+      - Cooling
+      - Lights
         
-v1.0 Hardware ++ codename: HiPi GrowBox 
+v1.0 - Hardware ++ codename: HiPi GrowBox 
 ----------------------------
 + +v1.0 STL Files for 3D Printing.
 + Complete BOM / List of Parts Used. 
     - Google Sheets URL [ https://docs.google.com/spreadsheets/d/1K0nIIm9HZUxUeM3qkQexdpk9o9CC-RDYGRxd3GqyZ_c/edit?usp=sharing ]
 
-v1.0 Documentation
+v1.0 - Documentation
 ----------------------------
 Basic documentation for each subset above. 
