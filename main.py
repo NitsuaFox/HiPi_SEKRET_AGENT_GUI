@@ -10,6 +10,8 @@ import threading
 import time
 import logging
 
+FAN_SPEED = 0
+
 # GPIO PINS
 TRIGGER_PIN = 6 # Trigger for Ultrasonic Sensor
 ECHO_PIN = 5 # Echo for Ultrasonic Sensor
@@ -76,7 +78,7 @@ class SensorReturns:
 
     def get_sensor_data(self):
         while True:
-            logging.info(f"Retrieving sensor data at {time.time()}...")
+            logging.info(f"get_sensor_data -running {time.time()}...")
             self.get_distance()
             self.get_dht22_data()
             time.sleep(0.5)
@@ -94,20 +96,84 @@ class SensorThread(threading.Thread):
 
 sensor_thread = SensorThread()
 
+class FanController:
+    def __init__(self, fan_pwm_pin, sensor_returns):
+        self.fan_pwm_pin = fan_pwm_pin
+        self.sensor_returns = sensor_returns
+        self.pwm = GPIO.PWM(fan_pwm_pin, 100)
+        self.pwm.start(0)
+
+    def update_fan_speed(self):
+        global FAN_SPEED
+        temperature = self.sensor_returns.temperature
+        # Example temperature thresholds
+        if temperature >= 25:
+            logging.info("FAN1-MAX%")
+            # Fan speed should be 100%
+            FAN_SPEED = 100
+        elif temperature >= 23:
+            # Fan speed should be 75%
+            logging.info("FAN1-75%")
+            FAN_SPEED = 75
+        elif temperature >= 20:
+            # Fan speed should be 50%
+            logging.info("FAN1-50%")
+            FAN_SPEED = 50
+        else:
+            # Fan speed should be 0%
+            logging.info("FAN1-OFF%")
+            FAN_SPEED = 0
+        self.pwm.ChangeDutyCycle(FAN_SPEED)
+
+    def run_fan_speed_test(self):
+        # Run fan speed test
+        pass
+
+    def set_fan_speed(self):
+        global FAN_SPEED
+        while True:
+            # Prompt user for new fan speed
+            new_fan_speed_str = input("Enter new fan speed (0-100, or x to cancel): ")
+            if new_fan_speed_str.lower() == "x":
+                break
+            try:
+                new_fan_speed = float(new_fan_speed_str)
+                if new_fan_speed < 0 or new_fan_speed > 100:
+                    raise ValueError("Fan speed must be between 0 and 100")
+                FAN_SPEED = new_fan_speed
+                fan_controller.pwm.ChangeDutyCycle(FAN_SPEED)
+                print(f"Fan speed set to {new_fan_speed}%")
+            except ValueError as e:
+                print(f"Invalid fan speed: {e}")
+
+#############
+#CONFIG MENU#
+#############
 
 class Menu:
     def __init__(self):
         self.stop = False
-    
+
     def print_main_menu(self):
+        print("   +++ HiPi Backend Menu +++")
+        print("   =========================")
         print("1. Print Current Sensor Data")
-        print("2. Config")
-    
+        print("2. Sensor Setup")
+        print("3. Climate Control Setup")
+        print("4. Fan Control")
+
     def print_sensor_returns_menu(self):
         print("1. Turn Sensor Returns On")
         print("2. Turn Sensor Returns Off")
+
+    def print_climate_setup_menu(self):
+        print("1. Set Climate Target Temperature")
+        print("2. Run Fan Speed Test")
         print("b. Back")
 
+    def print_fan_control_menu(self):
+        print("1. Set Fan Speed")
+        print("b. Back")
 
     def run(self):
         while not self.stop:
@@ -133,6 +199,31 @@ class Menu:
                         break
                     else:
                         print("Invalid choice")
+            elif choice == "3":
+                while True:
+                    self.print_climate_setup_menu()
+                    climate_setup_choice = input("Enter choice: ")
+                    if climate_setup_choice == "1":
+                        fan_controller.set_climate_target_temperature()
+                        break
+                    elif climate_setup_choice == "2":
+                        # Run fan speed test
+                        break
+                    elif climate_setup_choice.lower() == "b":
+                        break
+                    else:
+                        print("Invalid choice")
+            elif choice == "4":
+                while True:
+                    self.print_fan_control_menu()
+                    fan_control_choice = input("Enter choice: ")
+                    if fan_control_choice == "1":
+                        fan_controller.set_fan_speed()
+                        break
+                    elif fan_control_choice.lower() == "b":
+                        break
+                    else:
+                        print("Invalid choice")
             elif choice.lower() == "stop":
                 self.stop = True
                 break
@@ -141,10 +232,15 @@ class Menu:
 
 
 if __name__ == '__main__':
-# Start the sensor thread
+    # Start the sensor thread
     sensor_thread.start()
+
+    # Create fan_controller
+    fan_controller = FanController(FAN_PWM_PIN, sensor_returns)
+
+    # Create Menu instance
     menu = Menu()
     menu.run()
 
-# Cleanup GPIO
-GPIO.cleanup()
+    # Cleanup GPIO
+    GPIO.cleanup()
