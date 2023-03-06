@@ -8,12 +8,14 @@ import Adafruit_DHT
 import threading
 import time
 import logging
+import configparser
 
-
+#GLOBAL Settings
 USERNAMEID = "Bobby" 
 GROWBOXID = "MyHiPi"
 FAN_SPEED = 0
 TARGET_TEMP = 20
+CONFIG_FILE = 'config.ini'
 
 # GPIO PINS
 TRIGGER_PIN = 6 # Trigger for Ultrasonic Sensor
@@ -193,8 +195,25 @@ class FanController:
             except ValueError as e:
                 print(f"Invalid fan speed: {e}")
 
+class ConfigManager:
+    def __init__(self, config_file):
+        self.config_file = config_file
+        self.config = configparser.ConfigParser()
+        self.config.read(self.config_file)
+
+    def get_value(self, section, key):
+        return self.config.get(section, key)
+
+    def set_value(self, section, key, value):
+        if not self.config.has_section(section):
+            self.config.add_section(section)
+        self.config.set(section, key, str(value))
+
+        with open(self.config_file, 'w') as f:
+            self.config.write(f)
+
 #############
-#CONFIG MENU#
+#SYSTEM MENU#
 #############
 
 class Menu:
@@ -209,7 +228,8 @@ class Menu:
         print("3. Climate Control Setup")
         print("4. Watering System Setup")
         print("5. General")
-
+        climate_target_temp = config_manager.get_value('ClimateControl', 'climate_target_temp')
+        print(climate_target_temp)
 
     def print_sensor_returns_menu(self):
         print("1. [DEBUG] Turn Sensor Returns On")
@@ -318,16 +338,20 @@ class Menu:
                         print("Invalid choice")
 
 if __name__ == '__main__':
-    # Start the sensor thread
+    #Start Persistant Config Manager Class
+    config_manager = ConfigManager('config.ini')
+
+    # Start the sensor thread Class
     sensor_thread.start()
 
-    # Create fan_controller instance
+    # Create fan_controller instance Class
     fan_controller = FanController(FAN_PWM_PIN, sensor_returns)
 
-    # Create Watering System Instance
+    # Create Watering System Instance Class
     watering_system = WateringSystem(RELAY_WATERPUMP)
+    watering_system.pump_off()
 
-    # Create Menu instance
+    # Create Menu instance Class
     menu = Menu()
     menu.run()
 
