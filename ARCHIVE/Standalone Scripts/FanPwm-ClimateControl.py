@@ -2,7 +2,6 @@ import RPi.GPIO as GPIO
 import time
 import Adafruit_DHT
 
-
 Sensor_DHT22 = Adafruit_DHT.DHT22
 
 # Pin constants
@@ -34,62 +33,37 @@ def set_fan_speed(speed):
     duty_cycle = speed / 100.0 * 100
     pwm.ChangeDutyCycle(duty_cycle)
 
-# PID constants
-Kp = 100
-Ki = 0.01
-Kd = 0.01
-
-# PID variables
-integral = 0
-prev_error = 0
-temp_counter = 0
-
 try:
-    # Get target temperature
+    # Get target temperature and variance
     set_temp = float(input("Enter target temperature: "))
-    print(f"Entered: {set_temp}%")
+    temp_variance = float(input("Enter temperature variance: "))
+    temp_range = float(input("Enter temperature range: "))
+    print(f"Entered: target temperature {set_temp}°C, variance {temp_variance}°C, range {temp_range}°C")
 
     while True:
         # Read current temperature
         humidity, temp = Adafruit_DHT.read_retry(Sensor_DHT22, DHT22_PIN)
 
-        # Calculate error
-        error = set_temp - temp
-
-        # Calculate integral and derivative terms
-        integral = integral + error
-        derivative = error - prev_error
-
-        # Calculate PID output
-        pid_output = Kp * error + Ki * integral + Kd * derivative
-
-        # Limit PID output to between 0 and 100
-        pid_output = max(0, min(100, pid_output))
+        # Calculate temperature difference
+        temp_diff = temp - set_temp
 
         # Set fan speed based on temperature difference
-        temp_diff = temp - set_temp
         if temp_diff <= 0:
             set_fan_speed(0)
             print("Fan speed set to 0% (temperature below target)")
-            temp_counter = 0
-        elif temp_diff > 2:
+        elif temp_diff < temp_variance:
+            set_fan_speed(50)
+            print(f"Fan speed set to 50% (temperature difference: {temp_diff})")
+        elif temp_diff > temp_range:
             set_fan_speed(100)
-            print("Fan speed set to 100% (temperature too high)")
-            temp_counter = 0
+            print(f"Fan speed set to 100% (temperature difference: {temp_diff})")
         else:
-            if temp_counter >= 5:
-                set_fan_speed(pid_output + 20)
-                print(f"Fan speed increased to {pid_output+20}% (temperature not decreasing)")
-            else:
-                set_fan_speed(pid_output)
-                print(f"Fan speed set to {pid_output}%")
-            temp_counter += 1
+            fan_speed = 50 + (temp_diff - temp_variance) / (temp_range - temp_variance) * 50
+            set_fan_speed(fan_speed)
+            print(f"Fan speed set to {fan_speed}% (temperature difference: {temp_diff})")
 
         # Print current temperature
         print(f"Current temperature: {temp:.2f}°C")
-
-        # Update previous error
-        prev_error = error
 
         # Wait 1 second before updating again
         time.sleep(1)

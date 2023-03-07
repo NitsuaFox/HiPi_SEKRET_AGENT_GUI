@@ -128,7 +128,7 @@ class WateringSystem:
         time.sleep(2)
         self.pump_off()
 
-class FanController:
+class ClimateControl:
     def __init__(self, fan_pwm_pin, sensor_returns):
         self.fan_pwm_pin = fan_pwm_pin
         self.sensor_returns = sensor_returns
@@ -162,6 +162,30 @@ class FanController:
         print("We dont have a fan test yet bobby!")
         pass
 
+    def set_fan_speed(self):
+        global FAN_SPEED
+        while True:
+            # Prompt user for new fan speed
+            new_fan_speed_str = input(USERNAMEID + " please enter new fan speed (0-100, or x to cancel): ")
+            if new_fan_speed_str.lower() == "x":
+                break
+            try:
+                new_fan_speed = float(new_fan_speed_str)
+                if new_fan_speed < 0 or new_fan_speed > 100:
+                    raise ValueError("Fan speed must be between 0 and 100")
+                FAN_SPEED = new_fan_speed
+                if FAN_SPEED == 0:
+                    # Stop the fan
+                    GPIO.output(self.fan_pwm_pin, GPIO.LOW)
+                    print("Fan turned off")
+                else:
+                    # Set the fan speed
+                    self.pwm.ChangeDutyCycle(FAN_SPEED)
+                    print(f"Fan speed set to {new_fan_speed}%")
+            except ValueError as e:
+                print(f"Invalid fan speed: {e}")
+
+
     def set_climate_target_temperature(self):
         global TARGET_TEMP
         while True:
@@ -177,23 +201,25 @@ class FanController:
                 print("\nClimate control setup cancelled by user")
                 break
 
-
-    def set_fan_speed(self):
-        global FAN_SPEED
+    def run(self):
+        # Run climate control loop
         while True:
-            # Prompt user for new fan speed
-            new_fan_speed_str = input(USERNAMEID + " please enter new fan speed (0-100, or x to cancel): ")
-            if new_fan_speed_str.lower() == "x":
-                break
-            try:
-                new_fan_speed = float(new_fan_speed_str)
-                if new_fan_speed < 0 or new_fan_speed > 100:
-                    raise ValueError("Fan speed must be between 0 and 100")
-                FAN_SPEED = new_fan_speed
-                fan_controller.pwm.ChangeDutyCycle(FAN_SPEED)
-                print(f"Fan speed set to {new_fan_speed}%")
-            except ValueError as e:
-                print(f"Invalid fan speed: {e}")
+            # Update fan speed based on temperature
+            self.update_fan_speed()
+
+            # Check if temperature is within target range
+            temperature = self.sensor_returns.temperature
+            if temperature >= TARGET_TEMP:
+                logging.info("AC-OFF%")
+                # Turn off AC or other cooling devices
+            else:
+                logging.info("AC-MAX%")
+                # Turn on AC or other cooling devices
+
+            # Sleep for some period of time before updating again
+            time.sleep(10)
+
+
 
 class ConfigManager:
     def __init__(self, config_file):
@@ -286,7 +312,7 @@ class Menu:
                     self.print_climate_setup_menu()
                     climate_setup_choice = input("Enter choice: ")
                     if climate_setup_choice == "1":
-                        fan_controller.set_climate_target_temperature()
+                        climate_control.set_climate_target_temperature()
                         break
                     elif climate_setup_choice == "2":
                         # Run fan speed test
@@ -296,7 +322,7 @@ class Menu:
                             self.print_fan_control_menu()
                             fan_control_choice = input("Enter choice: ")
                             if fan_control_choice == "1":
-                                fan_controller.set_fan_speed()
+                                climate_control.set_fan_speed()
                                 break
                             elif fan_control_choice.lower() == "b":
                                 break
@@ -344,8 +370,8 @@ if __name__ == '__main__':
     # Start the sensor thread Class
     sensor_thread.start()
 
-    # Create fan_controller instance Class
-    fan_controller = FanController(FAN_PWM_PIN, sensor_returns)
+    # Initiate Climate Control Class
+    climate_control = ClimateControl(FAN_PWM_PIN, sensor_returns)
 
     # Create Watering System Instance Class
     watering_system = WateringSystem(RELAY_WATERPUMP)

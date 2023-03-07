@@ -1,49 +1,34 @@
 import RPi.GPIO as GPIO
 import time
 
-# Pin constants
+# Set up GPIO pins
 FAN_PWM_PIN = 12
 FAN_SPEED_PIN = 16
-
-# Setup GPIO
-GPIO.setmode(GPIO.BCM)
+GPIO.setmode(GPIO.BOARD)
 GPIO.setup(FAN_PWM_PIN, GPIO.OUT)
-GPIO.setup(FAN_SPEED_PIN, GPIO.IN)
+GPIO.setup(FAN_SPEED_PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+pwm = GPIO.PWM(FAN_PWM_PIN, 500)
 
-# Set PWM frequency
-pwm = GPIO.PWM(FAN_PWM_PIN, 1000)
+# Set initial PWM speed
 pwm.start(0)
-
-# Get current fan speed
-def get_fan_speed():
-    t = time.time()
-    count = 0
-    while (time.time() - t) < 1:
-        if GPIO.input(FAN_SPEED_PIN):
-            count += 1
-    return count * 60
-
-# Set fan speed
-def set_fan_speed(speed):
-    duty_cycle = speed / 100.0 * 100
-    pwm.ChangeDutyCycle(duty_cycle)
 
 try:
     while True:
-        # Read fan speed
-        fan_speed = get_fan_speed()
+        # Read raw data from speed pin
+        speed = GPIO.input(FAN_SPEED_PIN)
+        print(f"Speed: {speed}")
 
-        # Get user input for fan speed
-        speed = input("Enter fan speed (0-100): ")
-        speed = int(speed)
-
-        # Set fan speed
-        set_fan_speed(speed)
-
-        # Print fan speed
-        print(f"Fan speed set to {speed}%")
-        print(f"Current fan speed: {fan_speed} RPM")
+        # Set PWM duty cycle from user input and speed reading
+        duty_cycle = int(input("Enter duty cycle (0-100): "))
+        if duty_cycle == 0:
+            pwm.stop()
+        else:
+            pwm.ChangeDutyCycle(duty_cycle)
 
 except KeyboardInterrupt:
-    # Clean up GPIO
+    pass
+
+finally:
+    # Clean up GPIO pins
+    pwm.stop()
     GPIO.cleanup()
