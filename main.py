@@ -9,7 +9,6 @@ import threading
 import time
 import logging
 import configparser
-import psutil # used for system info menu.
 
 #GLOBAL Settings
 USERNAMEID = "Bobby" 
@@ -57,22 +56,17 @@ class SensorReturns:
         self.temperature = 0
 
     def get_distance(self):
-        # Initialize pulse_start to a value
-        pulse_start = 0
-
         # Send a 10us pulse to the trigger pin to start the measurement
         GPIO.output(TRIGGER_PIN, True)
         time.sleep(0.00001)
         GPIO.output(TRIGGER_PIN, False)
-       
+
         # Wait for the pulse to be returned
         while GPIO.input(ECHO_PIN) == 0:
             pulse_start = time.time()
 
         while GPIO.input(ECHO_PIN) == 1:
             pulse_end = time.time()
-
-        #print("pulse_end:", pulse_end) # Add this line to print the value of pulse_end
 
         # Calculate the duration of the pulse
         pulse_duration = pulse_end - pulse_start
@@ -81,7 +75,7 @@ class SensorReturns:
         self.distance_cm = round(pulse_duration * 17150, 2)
 
         # Sleep for a short time to avoid spamming the sensor
-        time.sleep(0.01)
+        time.sleep(0.02)
 
     def get_dht22_data(self):
         #logging.info(f"Talking to DHT22....")
@@ -90,14 +84,12 @@ class SensorReturns:
             self.humidity = round(humidity, 1)
             self.temperature = round(temperature, 1)
 
-
     def get_sensor_data(self):
         while True:
             #logging.info(f"get_sensor_data -running {time.time()}...")
             self.get_distance()
             self.get_dht22_data()
             time.sleep(0.2)
-            
 
 sensor_returns = SensorReturns() ## WE NEED TO START THIS HERE.
 
@@ -107,12 +99,8 @@ class SensorThread(threading.Thread):
         self.daemon = True
 
     def run(self):
-            while True:
-                try:
-                    sensor_returns.get_sensor_data()
-                except Exception as e:
-                    print("Sensor thread exception:", e)
-                    traceback.print_exc()
+        logging.info("SensorThread is running")
+        sensor_returns.get_sensor_data()
 
 sensor_thread = SensorThread() ## WE NEED TO START THIS HERE
 
@@ -120,7 +108,7 @@ class WateringSystem:
     def __init__(self, RELAY_WATERPUMP):
         self.RELAY_WATERPUMP = RELAY_WATERPUMP
         GPIO.setup(RELAY_WATERPUMP, GPIO.OUT)
-        self.empty_range = 10.50 # This is the measurement of which it the water state just before the pump.
+        self.empty_range = 10.70 # This is the measurement of which it the water state just before the pump.
 
 
     def pump_on(self):
@@ -324,7 +312,6 @@ class Menu:
         print("3. Climate Control Setup")
         print("4. Watering System Setup")
         print("5. General")
-        print("6. System Info")
         climate_target_temp = config_manager.get_value('ClimateControl', 'climate_target_temp')
         print(climate_target_temp)
 
@@ -353,22 +340,6 @@ class Menu:
         print("1. Update Username")
         print("2. Update Device Name")
         print("b. Back")
-
-    def print_system_info(self):
-        while True:
-            # Get system information
-            cpu_percent = psutil.cpu_percent()
-            memory_percent = psutil.virtual_memory().percent
-            disk_percent = psutil.disk_usage('/').percent
-
-            # Print system information without a new line
-            print(f"\rCPU Usage: {cpu_percent}% | Memory Usage: {memory_percent}% | Disk Usage: {disk_percent}%", end='')
-
-            # Wait for 1 second before updating again
-            time.sleep(1)
-
-
-        
 
     def run(self):
         while not self.stop:
@@ -453,16 +424,6 @@ class Menu:
                     else:
                         print("Invalid choice")
 
-            elif choice == "6":
-                while True:
-                    self.print_system_info()
-                    general_choice = input("Enter choice: ")
-                    if general_choice.lower() == "b":
-                        break
-                    else:
-                        print("Invalid choice")
-
-
 if __name__ == '__main__':
     #Start Persistant Config Manager Class
     config_manager = ConfigManager('config.ini')
@@ -480,8 +441,6 @@ if __name__ == '__main__':
     # Create Menu instance Class
     menu = Menu()
     menu.run()
-    num_threads = threading.active_count()
-    print("Number of running threads:", num_threads)
 
     # Cleanup GPIO
     GPIO.cleanup()
