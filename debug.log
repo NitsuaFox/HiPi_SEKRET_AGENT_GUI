@@ -17085,3 +17085,11 @@
 2023-03-09 23:27:18,861 [INFO] Pump turned off
 2023-03-09 23:27:22,013 [INFO] SensorThread is running
 2023-03-09 23:27:22,013 [INFO] Pump turned off
+2023-03-09 23:27:46,341 [INFO] Pump turned on
+2023-03-09 23:27:46,342 [INFO] Pump started because water is above MINIMAL TANK LEVEL: 7.52
+2023-03-09 23:27:51,755 [INFO] Pump turned off
+2023-03-09 23:27:51,756 [INFO] Pump STOPPED because distance is below or coming close to min level 11.71
+2023-03-09 23:28:24,469 [INFO] Pump turned on
+2023-03-09 23:28:24,470 [INFO] Pump started because water is above MINIMAL TANK LEVEL: 6.27
+2023-03-09 23:28:30,900 [INFO] Pump turned off
+2023-03-09 23:28:30,901 [INFO] Pump STOPPED because distance is below or coming close to min level 11.73
