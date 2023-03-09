@@ -4,7 +4,7 @@ I am a single man team working on all of this, and i'm using it to learn more ab
 
 =Expected V1 Release features=
 
-V1.0 - Main.py (Backend) codename: herbie
+V1.0 - Main.py (Backend) codename: herbie - IN FULL DEVELOPMENT
 -------------------------
 + Climate Control (Cooling ONLY)
     - DHT22 Temp/Humidity with 120mm PWM Fan
@@ -16,7 +16,7 @@ V1.0 - Main.py (Backend) codename: herbie
 + Complete Watering system for a single micro plant.
     - Soil Sensor + 5V Water Pump + Water Tank Level Monitor.
 
-V1.0 - WebApp (Frontend) - codename: SEKRET AGENT
+V1.0 - WebApp (Frontend) - codename: SEKRET AGENT - PENDING BACKEND WORK
 ---------------------------
   + Flask Http Web Interface JSON/Javascript to backend (HiPi) or probably websockets now.
   + Live Dashboard  
@@ -27,7 +27,7 @@ V1.0 - WebApp (Frontend) - codename: SEKRET AGENT
       - Cooling
       - Lights
         
-v1.0 - Hardware ++ codename: HiPi GrowBox 
+v1.0 - Hardware ++ codename: HiPi GrowBox - IN PLANNING STAGES
 ----------------------------
 + +v1.0 STL Files for 3D Printing.
 + Complete BOM / List of Parts Used. 
