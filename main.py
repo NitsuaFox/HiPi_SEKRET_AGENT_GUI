@@ -67,15 +67,17 @@ class SensorReturns:
 
         while GPIO.input(ECHO_PIN) == 1:
             pulse_end = time.time()
-
+ 
         # Calculate the duration of the pulse
         pulse_duration = pulse_end - pulse_start
 
-        # Calculate the distance in centimeters
-        self.distance_cm = round(pulse_duration * 17150, 2)
 
+        # Calculate the distance in centimeterss
+        self.distance_cm = round(pulse_duration * 17150, 2)
+        #logging.info("get_distance: I've calculated and stored the distance in self.distance_cm" )
         # Sleep for a short time to avoid spamming the sensor
-        time.sleep(0.02)
+        time.sleep(0.05)
+
 
     def get_dht22_data(self):
         #logging.info(f"Talking to DHT22....")
@@ -89,7 +91,7 @@ class SensorReturns:
             #logging.info(f"get_sensor_data -running {time.time()}...")
             self.get_distance()
             self.get_dht22_data()
-            time.sleep(0.2)
+            time.sleep(0.05)
 
 sensor_returns = SensorReturns() ## WE NEED TO START THIS HERE.
 
@@ -108,8 +110,8 @@ class WateringSystem:
     def __init__(self, RELAY_WATERPUMP):
         self.RELAY_WATERPUMP = RELAY_WATERPUMP
         GPIO.setup(RELAY_WATERPUMP, GPIO.OUT)
-        self.empty_range = 10.70 # This is the measurement of which it the water state just before the pump.
-
+        self.empty_range = 8.96 # This is the measurement of which it the water state just before the pump.
+        
 
     def pump_on(self):
         GPIO.output(self.RELAY_WATERPUMP, GPIO.LOW)
@@ -123,13 +125,13 @@ class WateringSystem:
             while True:
                 # Check the distance measured by the sensor
                 distance_cm = sensor_returns.distance_cm
-                print(distance_cm)
+                print("Inital Distance start of test_pump function test from distance_cm: " + str(distance_cm))
+
                 if distance_cm < self.empty_range:
                     # Turn on the pump
                     self.pump_on()
-                    print("Pump started...")
+                    logging.info("Pump started because water is above MINIMAL TANK LEVEL: " + str(distance_cm))
 
-                    # 
                     while True:
                         # Check the distance measured by the sensor
                         distance_cm = sensor_returns.distance_cm
@@ -137,18 +139,34 @@ class WateringSystem:
                         if distance_cm > self.empty_range:
                             # Stop the pump
                             self.pump_off()
-                            print("Pump stopped. Water Empty.")
+                            print("Pump disabled. FILL WATER TANK.")
+                            logging.info("Pump STOPPED because distance is below or coming close to min level " + str(distance_cm))
                             break
-                        time.sleep(0.1)
+                        time.sleep(0.05)
                 else:
-                    print("LETS WAIT FOR YOU TO ADD SOME WATER")
-                    time.sleep(5) # Wait for some time before checking again
+                    print("CHECKING WATER IN")
 
                 # Wait for some time before checking again
-                time.sleep(2)
-
-
-
+                    time.sleep(1)
+                    print("1...")
+                    time.sleep(1)
+                    print("2...")
+                    time.sleep(1)
+                    print("3...")
+                    time.sleep(1)
+                    print("4...")
+                    time.sleep(1)
+                    print("5...")
+                    time.sleep(1)
+                    print("6...")
+                    time.sleep(1)
+                    print("7...")
+                    time.sleep(1)
+                    print("8...")
+                    time.sleep(1)
+                    print("9...")
+                    time.sleep(1)
+                    print("10...")
 
 class ClimateControl:
     def __init__(self, fan_pwm_pin, sensor_returns):
