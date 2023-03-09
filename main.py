@@ -56,11 +56,14 @@ class SensorReturns:
         self.temperature = 0
 
     def get_distance(self):
+        # Initialize pulse_start to a value
+        pulse_start = 0
+
         # Send a 10us pulse to the trigger pin to start the measurement
         GPIO.output(TRIGGER_PIN, True)
         time.sleep(0.00001)
         GPIO.output(TRIGGER_PIN, False)
-
+       
         # Wait for the pulse to be returned
         while GPIO.input(ECHO_PIN) == 0:
             pulse_start = time.time()
@@ -68,6 +71,8 @@ class SensorReturns:
         while GPIO.input(ECHO_PIN) == 1:
             pulse_end = time.time()
 
+        print("pulse_end:", pulse_end) # Add this line to print the value of pulse_end
+        
         # Calculate the duration of the pulse
         pulse_duration = pulse_end - pulse_start
 
