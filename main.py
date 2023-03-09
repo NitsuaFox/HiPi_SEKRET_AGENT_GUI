@@ -16,6 +16,7 @@ GROWBOXID = "MyHiPi"
 FAN_SPEED = 0
 TARGET_TEMP = 20
 CONFIG_FILE = 'config.ini'
+DEADSPACE = 12
 
 # GPIO PINS
 TRIGGER_PIN = 6 # Trigger for Ultrasonic Sensor
@@ -48,7 +49,7 @@ logging.basicConfig(
 )
 
 # CLASSES
-class SensorReturns:
+class SensorReturns: 
     def __init__(self):
         self.distance_cm = 0
         self.humidity = 0
@@ -90,7 +91,7 @@ class SensorReturns:
             self.get_dht22_data()
             time.sleep(0.2)
 
-sensor_returns = SensorReturns()
+sensor_returns = SensorReturns() ## WE NEED TO START THIS HERE.
 
 class SensorThread(threading.Thread):
     def __init__(self):
@@ -101,12 +102,14 @@ class SensorThread(threading.Thread):
         logging.info("SensorThread is running")
         sensor_returns.get_sensor_data()
 
-sensor_thread = SensorThread()
+sensor_thread = SensorThread() ## WE NEED TO START THIS HERE
 
 class WateringSystem:
     def __init__(self, RELAY_WATERPUMP):
         self.RELAY_WATERPUMP = RELAY_WATERPUMP
         GPIO.setup(RELAY_WATERPUMP, GPIO.OUT)
+        self.empty_range = 10.70 # This is the measurement of which it the water state just before the pump.
+
 
     def pump_on(self):
         GPIO.output(self.RELAY_WATERPUMP, GPIO.LOW)
@@ -117,16 +120,35 @@ class WateringSystem:
         logging.info("Pump turned off")
 
     def test_pump(self):
-             
-        self.pump_on()
-        logging.info("Pump on") 
-        time.sleep(2)
-        self.pump_off()
-        time.sleep(2)
-        self.pump_on()
-        logging.info("Pump on") 
-        time.sleep(2)
-        self.pump_off()
+            while True:
+                # Check the distance measured by the sensor
+                distance_cm = sensor_returns.distance_cm
+                print(distance_cm)
+                if distance_cm < self.empty_range:
+                    # Turn on the pump
+                    self.pump_on()
+                    print("Pump started...")
+
+                    # 
+                    while True:
+                        # Check the distance measured by the sensor
+                        distance_cm = sensor_returns.distance_cm
+
+                        if distance_cm > self.empty_range:
+                            # Stop the pump
+                            self.pump_off()
+                            print("Pump stopped. Water Empty.")
+                            break
+                        time.sleep(0.1)
+                else:
+                    print("LETS WAIT FOR YOU TO ADD SOME WATER")
+                    time.sleep(5) # Wait for some time before checking again
+
+                # Wait for some time before checking again
+                time.sleep(2)
+
+
+
 
 class ClimateControl:
     def __init__(self, fan_pwm_pin, sensor_returns):
@@ -141,7 +163,7 @@ class ClimateControl:
         # Example temperature thresholds
         if temperature >= 25:
             logging.info("FAN1-MAX%")
-            # Fan speed should be 100%
+            # Fan speed should be 100%4
             FAN_SPEED = 100
         elif temperature >= 23:
             # Fan speed should be 75%
@@ -166,8 +188,8 @@ class ClimateControl:
         global FAN_SPEED
         while True:
             # Prompt user for new fan speed
-            new_fan_speed_str = input(USERNAMEID + " please enter new fan speed (0-100, or x to cancel): ")
-            if new_fan_speed_str.lower() == "x":
+            new_fan_speed_str = input(USERNAMEID + " please enter new fan speed (0-100, or b to cancel): ")
+            if new_fan_speed_str.lower() == "b":
                 break
             try:
                 new_fan_speed = float(new_fan_speed_str)
@@ -185,6 +207,40 @@ class ClimateControl:
             except ValueError as e:
                 print(f"Invalid fan speed: {e}")
 
+    def fan_speed_test02(self):
+        print("Fuck you jimmy")
+        
+
+    def fan_speed_test01(self):
+        global FAN_SPEED
+        while True:
+            # Prompt user for new fan speed
+            new_fan_speed_str = input(USERNAMEID + "Please any Key to Continue FAN Test 01 - or press b to cancel")
+            if new_fan_speed_str.lower() == "b":
+                break
+            try:
+                GPIO.output(self.fan_pwm_pin, GPIO.LOW)
+                print("Fan at 0%")
+                time.sleep(5)
+                self.pwm.ChangeDutyCycle(20)
+                print("Fan at 20%")
+                time.sleep(5)
+                self.pwm.ChangeDutyCycle(40)
+                print("Fan at 40%")
+                time.sleep(5)
+                self.pwm.ChangeDutyCycle(60)
+                print("Fan at 60%")
+                time.sleep(5)
+                self.pwm.ChangeDutyCycle(80)
+                print("Fan at 80%")                    
+                time.sleep(5)
+                self.pwm.ChangeDutyCycle(100)
+                print("Fan at 100%")
+                time.sleep(5)
+                print ("Fan Test 01 complete")
+            except:
+                print("Error occurred during fan speed test")
+                break
 
     def set_climate_target_temperature(self):
         global TARGET_TEMP
@@ -195,8 +251,10 @@ class ClimateControl:
                 new_target_temp = input(USERNAMEID + " please enter the target temperature for your growbox (in Celsius): ")
                 TARGET_TEMP = float(new_target_temp)
                 print(f"Target temperature set to {TARGET_TEMP} C")
+                break
             except ValueError as e:
                 print(f"Invalid temperature: {e}")
+                break
             except KeyboardInterrupt:
                 print("\nClimate control setup cancelled by user")
                 break
@@ -323,6 +381,9 @@ class Menu:
                             fan_control_choice = input("Enter choice: ")
                             if fan_control_choice == "1":
                                 climate_control.set_fan_speed()
+                                break
+                            elif fan_control_choice == "2":
+                                climate_control.fan_speed_test02()
                                 break
                             elif fan_control_choice.lower() == "b":
                                 break
