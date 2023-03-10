@@ -365,20 +365,10 @@ class Menu:
         while not self.stop:
             self.print_main_menu()
             choice = input("Enter choice: ")
-            elif choice == "0":
+            if choice == "0":
                 while True:
-                    self.print_sensor_returns_menu()
-                    sensor_returns_choice = input("Enter choice: ")
-                    if sensor_returns_choice == "1":
-                        # Turn on sensor returns
-                        break
-                    elif sensor_returns_choice == "2":
-                        # Turn off sensor returns
-                        break
-                    elif sensor_returns_choice.lower() == "b":
-                        break
-                    else:
-                        print("Invalid choice")        
+                        print("Invalid choice")       
+                break 
             
             elif choice == "1":
                 while True:
