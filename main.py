@@ -170,6 +170,7 @@ class WateringSystem:
 
 class ClimateControl:
     def __init__(self, fan_pwm_pin, sensor_returns):
+
         self.fan_pwm_pin = fan_pwm_pin
         self.sensor_returns = sensor_returns
         self.pwm = GPIO.PWM(fan_pwm_pin, 100)
@@ -325,6 +326,7 @@ class Menu:
     def print_main_menu(self):
         print("   +++ HiPi Backend Menu +++")
         print("   =========================")
+        print("0. Initiate HiPi Growbox")
         print("1. Print Current Sensor Data")
         print("2. Sensor Setup")
         print("3. Climate Control Setup")
@@ -363,7 +365,22 @@ class Menu:
         while not self.stop:
             self.print_main_menu()
             choice = input("Enter choice: ")
-            if choice == "1":
+            elif choice == "0":
+                while True:
+                    self.print_sensor_returns_menu()
+                    sensor_returns_choice = input("Enter choice: ")
+                    if sensor_returns_choice == "1":
+                        # Turn on sensor returns
+                        break
+                    elif sensor_returns_choice == "2":
+                        # Turn off sensor returns
+                        break
+                    elif sensor_returns_choice.lower() == "b":
+                        break
+                    else:
+                        print("Invalid choice")        
+            
+            elif choice == "1":
                 while True:
                     print(f"\r Sensor Data: Distance: {sensor_returns.distance_cm} cm, Humidity: {sensor_returns.humidity} %, Temperature: {sensor_returns.temperature} C")
                     print("Press 'x' to go back")
@@ -441,6 +458,8 @@ class Menu:
                         break
                     else:
                         print("Invalid choice")
+
+
 
 if __name__ == '__main__':
     #Start Persistant Config Manager Class
