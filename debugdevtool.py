@@ -1,4 +1,4 @@
-#"HERBIE" Backend DEBUG system for HiPi Growbox
+#"HERBIE" Backend system for HiPi Growbox
 
 # Include Libraries
 from getch import getch
@@ -324,7 +324,7 @@ class Menu:
         self.stop = False
 
     def print_main_menu(self):
-        print("   +++ HiPi Development System Menu +++")
+        print("   +++ HiPi Backend Menu +++")
         print("   =========================")
         print("0. Initiate HiPi Growbox")
         print("1. Print Current Sensor Data")
