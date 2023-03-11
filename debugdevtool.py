@@ -1,4 +1,4 @@
-#"HERBIE" Backend system for HiPi Growbox
+#"HERBIE" Backend DEBUG system for HiPi Growbox
 
 # Include Libraries
 from getch import getch
@@ -44,7 +44,7 @@ logging.basicConfig(
     level=logging.DEBUG,
     format="%(asctime)s [%(levelname)s] %(message)s",
     handlers=[
-        logging.FileHandler("main.log")  # Output to file
+        logging.FileHandler("debug.log")  # Output to file
     ]
 )
 
@@ -324,7 +324,7 @@ class Menu:
         self.stop = False
 
     def print_main_menu(self):
-        print("   +++ HiPi Backend Menu +++")
+        print("   +++ HiPi Development System Menu +++")
         print("   =========================")
         print("0. Initiate HiPi Growbox")
         print("1. Print Current Sensor Data")
