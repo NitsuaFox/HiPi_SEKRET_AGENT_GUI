@@ -5,7 +5,7 @@ import RPi.GPIO as GPIO
 
 # Set the sensor type and GPIO pin number
 sensor = Adafruit_DHT.DHT22
-pin = 17
+pin = 27
 
 
 # Set up the GPIO pin

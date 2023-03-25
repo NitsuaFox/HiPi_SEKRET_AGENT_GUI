@@ -2,7 +2,8 @@
 
 import threading
 import time
-import RPi.GPIO as GPIO
+import Adafruit_DHT
+import RPi.GPIO as GPIO # Used for Reading/Writing GPIOS on Raspberry Pi Zero 2 W
 
 class Sensor:
     def __init__(self):
@@ -20,21 +21,19 @@ class SoilMoistureSensor(Sensor):
     def read_data(self):
         while True:
             # Replace this with your own sensor reading code
-            self.sensor_data['value'] = 50
+            self.sensor_data['soil_value'] = 50
             time.sleep(1)
 
-class TemperatureSensor(Sensor):
-    def read_data(self):
-        while True:
-            # Replace this with your own sensor reading code
-            self.sensor_data['value'] = 25
-            time.sleep(1)
+class TemperatureHumiditySensor(Sensor):
+    SENSOR_TYPE = Adafruit_DHT.DHT22  # Change to Adafruit_DHT.DHT11 if using DHT11 sensor
+    PIN = 27  # Replace with the GPIO pin number you have connected the DHT sensor to
 
-class HumiditySensor(Sensor):
     def read_data(self):
         while True:
-            # Replace this with your own sensor reading code
-            self.sensor_data['value'] = 60
+            humidity, temperature = Adafruit_DHT.read_retry(self.SENSOR_TYPE, self.PIN)
+            if humidity is not None and temperature is not None:
+                self.sensor_data['temperature_value'] = temperature
+                self.sensor_data['humidity_value'] = humidity
             time.sleep(1)
 
 class UltrasonicSensor(Sensor):
@@ -48,7 +47,6 @@ class UltrasonicSensor(Sensor):
         GPIO.setup(self.ECHO_PIN, GPIO.IN)
 
     def read_data(self):
-        print("Ultrasonic sensor thread started")  # Debugging print statement
         while True:
             GPIO.output(self.TRIGGER_PIN, True)
             time.sleep(0.00001)
@@ -66,16 +64,17 @@ class UltrasonicSensor(Sensor):
             time_elapsed = stop_time - start_time
             distance = (time_elapsed * 34300) / 2
             
-            print("Distance:", distance)  # Add this line to debug the distance value
+            #print("Distance:", distance)  # Debugging print statement
 
-            water_level = 100 - ((distance - 2) * (100 / (20 - 2))) # Assuming 3 cm is 100% and 15 cm is 0%
+            water_level = 100 - ((distance - 2) * (100 / (20 - 2))) # Assuming 2 cm is 100% and 20 cm is 0%
             water_level = max(0, min(100, water_level)) # Clamping water_level between 0 and 100
+            water_level = int(round(water_level))  # Round and convert to integer
 
-            self.sensor_data['value'] = water_level
-
+            self.sensor_data['water_value'] = water_level
             print("Water Level:", water_level)  # Debugging print statement
-            
             time.sleep(1)
+
+
 
 class Initialisation:
     def __init__(self):
@@ -137,21 +136,19 @@ init.start_menu()
 
 # Create instances of each sensor class
 soil_moisture_sensor = SoilMoistureSensor()
-temperature_sensor = TemperatureSensor()
-humidity_sensor = HumiditySensor()
+temperature_humidity_sensor = TemperatureHumiditySensor()
 ultrasonic_sensor = UltrasonicSensor()
 
 # Start reading data for each sensor
 soil_moisture_sensor.start_reading()
-temperature_sensor.start_reading()
-humidity_sensor.start_reading()
+temperature_humidity_sensor.start_reading()
 ultrasonic_sensor.start_reading()
 
 # Your main program goes here
 while True:
     # Access the sensor data from each instance
-    print("Soil Moisture:", soil_moisture_sensor.sensor_data['value'])
-    print("Temperature:", temperature_sensor.sensor_data['value'])
-    print("Humidity:", humidity_sensor.sensor_data['value'])
-    print("Water Level:", ultrasonic_sensor.sensor_data['value'], "%")
+    print("Soil Moisture:", soil_moisture_sensor.sensor_data['soil_value'])
+    print("Temperature:", temperature_humidity_sensor.sensor_data.get('temperature_value', 'N/A'))
+    print("Humidity:", temperature_humidity_sensor.sensor_data.get('humidity_value', 'N/A'))
+    print("Water Level:", ultrasonic_sensor.sensor_data['water_value'], "%")
     time.sleep(1)
