@@ -5,7 +5,8 @@ import time
 import Adafruit_DHT
 import RPi.GPIO as GPIO # Used for Reading/Writing GPIOS on Raspberry Pi Zero 2 W
 
-class Sensor:
+#Sensor Class - This class is used to enable multi-threading for all sensors. 
+class Sensor: 
     def __init__(self):
         self.sensor_data = {'value': None}
 
@@ -17,6 +18,7 @@ class Sensor:
         sensor_thread.daemon = True
         sensor_thread.start()
 
+#Soil Sensor Config for checking the soil of the plant.
 class SoilMoistureSensor(Sensor):
     def read_data(self):
         while True:
@@ -24,6 +26,7 @@ class SoilMoistureSensor(Sensor):
             self.sensor_data['soil_value'] = 50
             time.sleep(1)
 
+#DHT22 Sensor Config for Temp/Humid Readouts.
 class TemperatureHumiditySensor(Sensor):
     SENSOR_TYPE = Adafruit_DHT.DHT22  # Change to Adafruit_DHT.DHT11 if using DHT11 sensor
     PIN = 27  # Replace with the GPIO pin number you have connected the DHT sensor to
@@ -36,6 +39,7 @@ class TemperatureHumiditySensor(Sensor):
                 self.sensor_data['humidity_value'] = humidity
             time.sleep(1)
 
+#Ultrasonic Sensor for Checking Water level
 class UltrasonicSensor(Sensor):
     TRIGGER_PIN = 5
     ECHO_PIN = 6
@@ -74,8 +78,7 @@ class UltrasonicSensor(Sensor):
             print("Water Level:", water_level)  # Debugging print statement
             time.sleep(1)
 
-
-
+#Initialisation Class - Starts Main Menu that asks user questions, and sets up the inital config and passes the input  to 'GrowBoxRoutine' Class
 class Initialisation:
     def __init__(self):
         self.target_temp = 0
@@ -115,6 +118,10 @@ class Initialisation:
 
         # Move on to GrowBoxRoutine class
         GrowBoxRoutine(self.target_temp, self.light_cycle_mode)
+
+# This is the main brains that creates the perfect climate based on 
+# what the user has entered in the initalisation class, and by reading the sensors and working out
+# best time to water the plant, what fan speed to run to try and cool things down.
 
 class GrowBoxRoutine:
     def __init__(self, target_temp, light_cycle_mode):
