@@ -2,11 +2,11 @@
 
 import threading
 import time
+import RPi.GPIO as GPIO
 
 class Sensor:
-
     def __init__(self):
-        self.sensor_data = {}
+        self.sensor_data = {'value': None}
 
     def read_data(self):
         pass
@@ -38,10 +38,43 @@ class HumiditySensor(Sensor):
             time.sleep(1)
 
 class UltrasonicSensor(Sensor):
+    TRIGGER_PIN = 5
+    ECHO_PIN = 6
+
+    def __init__(self):
+        super().__init__()
+        GPIO.setmode(GPIO.BCM)
+        GPIO.setup(self.TRIGGER_PIN, GPIO.OUT)
+        GPIO.setup(self.ECHO_PIN, GPIO.IN)
+
     def read_data(self):
+        print("Ultrasonic sensor thread started")  # Debugging print statement
         while True:
-            # Replace this with your own sensor reading code
-            self.sensor_data['value'] = 10
+            GPIO.output(self.TRIGGER_PIN, True)
+            time.sleep(0.00001)
+            GPIO.output(self.TRIGGER_PIN, False)
+
+            start_time = time.time()
+            stop_time = time.time()
+
+            while GPIO.input(self.ECHO_PIN) == 0:
+                start_time = time.time()
+
+            while GPIO.input(self.ECHO_PIN) == 1:
+                stop_time = time.time()
+
+            time_elapsed = stop_time - start_time
+            distance = (time_elapsed * 34300) / 2
+            
+            print("Distance:", distance)  # Add this line to debug the distance value
+
+            water_level = 100 - ((distance - 2) * (100 / (20 - 2))) # Assuming 3 cm is 100% and 15 cm is 0%
+            water_level = max(0, min(100, water_level)) # Clamping water_level between 0 and 100
+
+            self.sensor_data['value'] = water_level
+
+            print("Water Level:", water_level)  # Debugging print statement
+            
             time.sleep(1)
 
 class Initialisation:
@@ -120,5 +153,5 @@ while True:
     print("Soil Moisture:", soil_moisture_sensor.sensor_data['value'])
     print("Temperature:", temperature_sensor.sensor_data['value'])
     print("Humidity:", humidity_sensor.sensor_data['value'])
-    print("Distance:", ultrasonic_sensor.sensor_data['value'])
+    print("Water Level:", ultrasonic_sensor.sensor_data['value'], "%")
     time.sleep(1)
