@@ -4,6 +4,7 @@ import threading
 import time
 import Adafruit_DHT
 import RPi.GPIO as GPIO # Used for Reading/Writing GPIOS on Raspberry Pi Zero 2 W
+import configparser
 
 #Sensor Class - This class is used to enable multi-threading for all sensors. 
 class Sensor: 
@@ -81,36 +82,45 @@ class UltrasonicSensor(Sensor):
 #Initialisation Class - Starts Main Menu that asks user questions, and sets up the inital config and passes the input  to 'GrowBoxRoutine' Class
 class Initialisation:
     def __init__(self):
-        self.target_temp = 0
-        self.light_cycle_mode = 0
+        self.config = configparser.ConfigParser()
+        self.config.read('config.ini')
+        
+        if not self.config.has_section('settings'):
+            self.config.add_section('settings')
+        
+        self.target_temp = self.config.getint('settings', 'target_temp', fallback=0)
+        self.light_cycle_mode = self.config.getint('settings', 'light_cycle_mode', fallback=0)
 
     def start_menu(self):
-        # Ask for target temp
-        self.target_temp = input("Input Target Temperature in Celsius: ")
-        print("Target Temperature set to: " + self.target_temp + " C")
+        print("1. Continue with current config")
+        print("2. Update config")
 
-        # Ask for initial start light cycle mode
-        print("Please select an initial start light cycle mode:")
-        print("1. 12/12")
-        print("2. 20/4")
-        print("3. 18/6")
-        print("4. Always On")
+        choice = input("Enter your choice (1 or 2): ")
 
-        while True:
-            self.light_cycle_mode = input("Enter your choice (1-4): ")
-            if self.light_cycle_mode in ["1", "2", "3", "4"]:
-                break
-            else:
-                print("Invalid choice. Please enter a number between 1 and 4.")
+        if choice == "2":
+            # Update target temp
+            self.target_temp = input("Input Target Temperature in Celsius: ")
+            self.config.set('settings', 'target_temp', self.target_temp)
+            print("Target Temperature set to: " + self.target_temp + " C")
 
-        if self.light_cycle_mode == "1":
-            print("Initial light cycle mode set to 12/12.")
-        elif self.light_cycle_mode == "2":
-            print("Initial light cycle mode set to 20/4.")
-        elif self.light_cycle_mode == "3":
-            print("Initial light cycle mode set to 18/6.")
-        else:
-            print("Initial light cycle mode set to Always On.")
+            # Update light cycle mode
+            print("Please select an initial start light cycle mode:")
+            print("1. 12/12")
+            print("2. 20/4")
+            print("3. 18/6")
+            print("4. Always On")
+
+            while True:
+                self.light_cycle_mode = input("Enter your choice (1-4): ")
+                if self.light_cycle_mode in ["1", "2", "3", "4"]:
+                    break
+                else:
+                    print("Invalid choice. Please enter a number between 1 and 4.")
+            self.config.set('settings', 'light_cycle_mode', self.light_cycle_mode)
+            
+            # Save the updated config to the file
+            with open('config.ini', 'w') as configfile:
+                self.config.write(configfile)
 
         # Convert data types and update instance variables
         self.target_temp = int(self.target_temp)
