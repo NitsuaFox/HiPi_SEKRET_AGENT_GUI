@@ -36,3 +36,4 @@ v1.0 - Hardware ++ codename: HiPi GrowBox - IN PLANNING STAGES
 v1.0 - Documentation
 ----------------------------
 Basic documentation for each subset above. 
+![Image 18-03-2023 at 20 32](https://user-images.githubusercontent.com/121540204/228090611-655f33cf-bafe-4884-9ee6-1ec76ec47327.jpg)
