@@ -1,5 +1,4 @@
 # "HERBIE" HiPi v1.0
-
 import threading
 import time
 import Adafruit_DHT
